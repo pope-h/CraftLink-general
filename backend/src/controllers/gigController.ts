@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 import Gig from '../models/Gig';
-import { generateGigId } from '../utils/idGenerator';
+import { generateId } from '../utils/idGenerator';
 import { createMerkleTree, getGigProof } from '../utils/merkleTreeUtils';
 import { IGig } from '../types';
 
@@ -22,7 +22,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
     } = req.body;
 
     // Generate unique gig ID
-    const gigId = generateGigId(clientAddress, title);
+    const gigId = generateId(clientAddress, title);
 
     // Create gig object
     const gig = new Gig({

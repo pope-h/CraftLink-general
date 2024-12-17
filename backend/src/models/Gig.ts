@@ -34,9 +34,6 @@ const gigSchema: Schema = new Schema({
     enum: ['BEGINNER', 'INTERMEDIATE', 'EXPERT'],
     required: true
   },
-//   suggestedSkills: [{
-//     type: String
-//   }],
   projectDescription: {
     type: String,
     required: true

@@ -1,11 +1,11 @@
-import { generateGigId } from '../utils/idGenerator';
+import { generateId } from '../utils/idGenerator';
 
 describe('Generate Gig ID', () => {
   it('should generate a unique ID', () => {
     const clientAddress = '0x1234567890123456789012345678901234567890';
     const title = 'Test Gig';
     
-    const gigId = generateGigId(clientAddress, title);
+    const gigId = generateId(clientAddress, title);
     console.log('Generated Gig ID:', gigId);
     
     expect(gigId).toBeTruthy();
