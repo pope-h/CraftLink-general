@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import Gig from '../models/Gig';
 import { generateId } from '../utils/idGenerator';
-import { createMerkleTree, getGigProof } from '../utils/merkleTreeUtils';
+import { createMerkleTree, getProof } from '../utils/merkleTreeUtils';
 import { IGig } from '../types';
 
 export const createGig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -49,7 +49,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
     const { tree, root } = createMerkleTree(allGigs);
 
     // Generate and save Merkle proof
-    const proof = getGigProof(gig, tree);
+    const proof = getProof(gig, tree);
     
     // Update gig with Merkle proof and root
     gig.merkleProof = proof.map(p => p.data.toString('hex'));

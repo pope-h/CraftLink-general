@@ -1,4 +1,4 @@
-import { createMerkleTree, getGigProof, verifyMerkleProof } from '../utils/merkleTreeUtils';
+import { createMerkleTree, getProof, verifyMerkleProof } from '../utils/merkleTreeUtils';
 import { IGig } from '../types';
 
 describe('Merkle Tree Utilities', () => {
@@ -60,12 +60,12 @@ describe('Merkle Tree Utilities', () => {
     });
   });
 
-  describe('getGigProof', () => {
+  describe('getProof', () => {
     it('should generate a proof for a specific gig', () => {
       const { tree } = createMerkleTree(mockGigs);
       const targetGig = mockGigs[0];
       
-      const proof = getGigProof(targetGig, tree);
+      const proof = getProof(targetGig, tree);
       
       expect(Array.isArray(proof)).toBeTruthy();
       expect(proof.length).toBeGreaterThan(0);
@@ -77,7 +77,7 @@ describe('Merkle Tree Utilities', () => {
       const { tree, root } = createMerkleTree(mockGigs);
       const targetGig = mockGigs[0];
       
-      const proof = getGigProof(targetGig, tree);
+      const proof = getProof(targetGig, tree);
       const isVerified = verifyMerkleProof(targetGig, proof, root);
       
       expect(isVerified).toBeTruthy();
@@ -91,7 +91,7 @@ describe('Merkle Tree Utilities', () => {
         title: 'Tampered Gig'
       };
       
-      const proof = getGigProof(targetGig, tree);
+      const proof = getProof(targetGig, tree);
       const isVerified = verifyMerkleProof(differentGig, proof, root);
       
       expect(isVerified).toBeFalsy();

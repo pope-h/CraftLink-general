@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction, ErrorRequestHandler 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import gigRoutes from './routes/gigRoutes';
+import connectDB from './utils/db';
 
 dotenv.config();
 
@@ -9,22 +10,6 @@ const app: Express = express();
 
 // Middleware
 app.use(express.json());
-
-// Database connection
-const connectDB = async () => {
-  try {
-    if (!process.env.MONGODB_URI) {
-      throw new Error('MongoDB URI is not defined');
-    }
-
-    await mongoose.connect(process.env.MONGODB_URI);
-
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
-  }
-};
 
 // Connect to database
 connectDB();
