@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction, ErrorRequestHandler 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import gigRoutes from './routes/gigRoutes.js';
+import artisanRoutes from './routes/artisanRoutes.js';
 import connectDB from './utils/db.js';
 
 dotenv.config();
@@ -16,6 +17,7 @@ connectDB();
 
 // Routes
 app.use('/api', gigRoutes);
+app.use('/api', artisanRoutes);
 
 // Error handling middleware
 const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
