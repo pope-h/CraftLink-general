@@ -1,6 +1,6 @@
 import express from 'express';
-import { createGig, getGig } from '../controllers/gigController';
-import { validateGigCreation } from '../middlewares/validationMiddleware';
+import { createGig, getGig } from '../controllers/gigController.ts';
+import { validateGigCreation } from '../middlewares/validationMiddleware.ts';
 
 const router = express.Router();
 

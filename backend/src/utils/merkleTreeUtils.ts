@@ -1,6 +1,8 @@
 import { MerkleTree } from 'merkletreejs';
-import SHA256 from 'crypto-js/sha256';
-import { IGig } from '../types';
+import pkg from 'crypto-js';
+import { IGig } from '../types/index.ts';
+
+const { SHA256 } = pkg;
 
 export const createMerkleTree = (data: any[]) => {
   // Convert gig data to leaves

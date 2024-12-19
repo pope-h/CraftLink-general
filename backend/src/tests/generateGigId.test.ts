@@ -1,4 +1,4 @@
-import { generateId } from '../utils/idGenerator';
+import { generateId } from '../utils/idGenerator.ts';
 
 describe('Generate Gig ID', () => {
   it('should generate a unique ID', () => {

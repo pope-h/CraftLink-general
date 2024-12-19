@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IArtisan } from '../types';
+import { IArtisan } from '../types/index.ts';
 
 const portfolioItemSchema: Schema = new Schema({
   id: {

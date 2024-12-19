@@ -1,5 +1,5 @@
-import { createMerkleTree, getProof, verifyMerkleProof } from '../utils/merkleTreeUtils';
-import { IGig } from '../types';
+import { createMerkleTree, getProof, verifyMerkleProof } from '../utils/merkleTreeUtils.ts';
+import { IGig } from '../types/index.ts';
 
 describe('Merkle Tree Utilities', () => {
   // Mock gig data for testing
@@ -40,6 +40,9 @@ describe('Merkle Tree Utilities', () => {
   describe('createMerkleTree', () => {
     it('should create a Merkle tree with the correct root', () => {
       const { tree, root } = createMerkleTree(mockGigs);
+
+      console.log('Merkle Root:', root); // remove this line
+      console.log('Merkle Tree:', tree); // remove this line
       
       expect(tree).toBeTruthy();
       expect(root).toBeTruthy();
@@ -66,6 +69,7 @@ describe('Merkle Tree Utilities', () => {
       const targetGig = mockGigs[0];
       
       const proof = getProof(targetGig, tree);
+      console.log('Merkle Proof:', proof); // remove this line
       
       expect(Array.isArray(proof)).toBeTruthy();
       expect(proof.length).toBeGreaterThan(0);
@@ -78,6 +82,7 @@ describe('Merkle Tree Utilities', () => {
       const targetGig = mockGigs[0];
       
       const proof = getProof(targetGig, tree);
+      console.log('Merkle Proof:', proof); // remove this line
       const isVerified = verifyMerkleProof(targetGig, proof, root);
       
       expect(isVerified).toBeTruthy();

@@ -1,8 +1,8 @@
 import express, { Express, Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import gigRoutes from './routes/gigRoutes';
-import connectDB from './utils/db';
+import gigRoutes from './routes/gigRoutes.js';
+import connectDB from './utils/db.js';
 
 dotenv.config();
 
