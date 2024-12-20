@@ -1,10 +1,24 @@
 import { ethers } from 'ethers';
 
-export const generateId = (clientAddress: string, title: string): string => { 
+export const generateId = (address: string, value1: string, value2: string): string => {
+  // Validate address format
+  if (!ethers.isAddress(address)) {
+    throw new Error('Invalid Ethereum address format');
+  }
+
+  // Validate value1 and value2 are non-empty strings after trimming
+  if (!value1?.trim()) {
+    throw new Error('First value cannot be empty');
+  }
+
+  if (!value2?.trim()) {
+    throw new Error('Second value cannot be empty');
+  }
+
   return ethers.keccak256(
     ethers.solidityPacked(
-      ['address', 'string', 'uint256'], 
-      [clientAddress, title, Date.now()]
+      ['address', 'string', 'string'],
+      [address, value1.trim(), value2.trim()]
     )
-  ); 
+  );
 };

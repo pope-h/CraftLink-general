@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import Artisan from '../models/Artisan.ts';
 import { generateId } from '../utils/idGenerator.ts';
-import { createMerkleTree, getProof } from '../utils/merkleTreeUtils.ts';
+import { createMerkleTree, getProof, serializeProof } from '../utils/merkleTreeUtils.ts';
 import { IArtisan, IPortfolioItem } from '../types/index.ts';
 import { ethers } from 'ethers';
 
@@ -23,7 +23,7 @@ export const createArtisanProfile = async (req: Request, res: Response, next: Ne
     } = req.body;
 
     // Generate unique artisan ID
-    const artisanId = generateId(walletAddress, serviceTagline);
+    const artisanId = generateId(walletAddress, artisanCategory, serviceTagline);
 
     // Add unique IDs to portfolio items
     const portfolioWithIds = portfolio ? portfolio.map((item: IPortfolioItem) => ({
@@ -56,22 +56,23 @@ export const createArtisanProfile = async (req: Request, res: Response, next: Ne
     // Save artisan to database
     await artisan.save();
 
-    // Create Merkle Tree for all artisans
-    const allArtisans = await Artisan.find();
-    const { tree, root } = createMerkleTree(allArtisans);
+    // Create Merkle Tree for all artisans with type specification
+    const allArtisans = await Artisan.find().lean();
+    const { tree, root } = createMerkleTree(allArtisans, 'artisan');
 
-    // Generate and save Merkle proof
-    const proof = getProof(artisan, tree);
+    // Generate Merkle proof with type
+    const proof = getProof(artisan.toObject(), tree, 'artisan');
     
-    // Update artisan with Merkle proof and root
-    artisan.merkleProof = proof.map(p => p.data.toString('hex'));
+    // Serialize proof for storage
+    const serializedProof = serializeProof(proof);
+    artisan.merkleProof = serializedProof.map(p => JSON.stringify(p));
     artisan.merkleRoot = root;
     await artisan.save();
 
     res.status(201).json({
       artisanId,
       merkleProof: artisan.merkleProof,
-      merkleRoot: artisan.merkleRoot
+      merkleRoot: root
     });
   } catch (error) {
     next(error);
@@ -112,18 +113,17 @@ export const updateArtisanProfile = async (req: Request, res: Response, next: Ne
     // Update artisan profile
     Object.assign(artisan, updateData);
 
-    // Regenerate Merkle Tree
-    const allArtisans = await Artisan.find();
-    const { tree, root } = createMerkleTree(allArtisans);
+    // Create Merkle Tree for all artisans with type specification
+    const allArtisans = await Artisan.find().lean();
+    const { tree, root } = createMerkleTree(allArtisans, 'artisan');
 
-    // Generate and save Merkle proof
-    const proof = getProof(artisan, tree);
+    // Generate Merkle proof with type
+    const proof = getProof(artisan.toObject(), tree, 'artisan');
     
-    // Update artisan with Merkle proof and root
-    artisan.merkleProof = proof.map(p => p.data.toString('hex'));
+    // Serialize proof for storage
+    const serializedProof = serializeProof(proof);
+    artisan.merkleProof = serializedProof.map(p => JSON.stringify(p));
     artisan.merkleRoot = root;
-
-    // Save updated profile
     await artisan.save();
 
     res.json({

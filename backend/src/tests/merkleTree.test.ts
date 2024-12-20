@@ -1,4 +1,4 @@
-import { createMerkleTree, getProof, verifyMerkleProof } from '../utils/merkleTreeUtils.ts';
+import { createMerkleTree, getProof, verifyMerkleProof, serializeProof, deserializeProof } from '../utils/merkleTreeUtils.ts';
 import { IGig } from '../types/index.ts';
 
 describe('Merkle Tree Utilities', () => {
@@ -38,68 +38,128 @@ describe('Merkle Tree Utilities', () => {
   ];
 
   describe('createMerkleTree', () => {
-    it('should create a Merkle tree with the correct root', () => {
-      const { tree, root } = createMerkleTree(mockGigs);
-
-      console.log('Merkle Root:', root); // remove this line
-      console.log('Merkle Tree:', tree); // remove this line
+    it('should create a Merkle tree with the correct root for gigs', () => {
+      const { tree, root } = createMerkleTree(mockGigs, 'gig');
       
       expect(tree).toBeTruthy();
       expect(root).toBeTruthy();
       expect(typeof root).toBe('string');
-      expect(root.length).toBeGreaterThan(0);
+      expect(root.length).toBe(64); // SHA256 hex string length
     });
 
     it('should create unique roots for different gig sets', () => {
-      const { root: root1 } = createMerkleTree(mockGigs);
+      const { root: root1 } = createMerkleTree(mockGigs, 'gig');
       const differentGigs = [...mockGigs, {
         ...mockGigs[0],
         id: '3',
         title: 'Different Gig'
       }];
-      const { root: root2 } = createMerkleTree(differentGigs);
+      const { root: root2 } = createMerkleTree(differentGigs, 'gig');
 
       expect(root1).not.toEqual(root2);
     });
+
+    it('should create consistent roots for same data', () => {
+      const { root: root1 } = createMerkleTree(mockGigs, 'gig');
+      const { root: root2 } = createMerkleTree([...mockGigs], 'gig');
+
+      expect(root1).toEqual(root2);
+    });
   });
 
-  describe('getProof', () => {
-    it('should generate a proof for a specific gig', () => {
-      const { tree } = createMerkleTree(mockGigs);
+  describe('getProof and serializeProof', () => {
+    it('should generate and serialize a proof for a specific gig', () => {
+      const { tree } = createMerkleTree(mockGigs, 'gig');
       const targetGig = mockGigs[0];
       
-      const proof = getProof(targetGig, tree);
-      console.log('Merkle Proof:', proof); // remove this line
+      const proof = getProof(targetGig, tree, 'gig');
+      const serializedProof = serializeProof(proof);
       
       expect(Array.isArray(proof)).toBeTruthy();
       expect(proof.length).toBeGreaterThan(0);
+      expect(serializedProof[0]).toHaveProperty('position');
+      expect(serializedProof[0]).toHaveProperty('data');
+      expect(typeof serializedProof[0].data).toBe('string');
+    });
+
+    it('should handle proof serialization and deserialization', () => {
+      const { tree } = createMerkleTree(mockGigs, 'gig');
+      const targetGig = mockGigs[0];
+      
+      const proof = getProof(targetGig, tree, 'gig');
+      const serializedProof = serializeProof(proof);
+      const serializedStrings = serializedProof.map(p => JSON.stringify(p));
+      const deserializedProof = deserializeProof(serializedStrings);
+      
+      expect(deserializedProof[0].position).toEqual(proof[0].position);
+      expect(deserializedProof[0].data.toString('hex')).toEqual(proof[0].data.toString('hex'));
     });
   });
 
   describe('verifyMerkleProof', () => {
     it('should verify a valid Merkle proof', () => {
-      const { tree, root } = createMerkleTree(mockGigs);
+      const { tree, root } = createMerkleTree(mockGigs, 'gig');
       const targetGig = mockGigs[0];
       
-      const proof = getProof(targetGig, tree);
-      console.log('Merkle Proof:', proof); // remove this line
-      const isVerified = verifyMerkleProof(targetGig, proof, root);
+      const proof = getProof(targetGig, tree, 'gig');
+      const isVerified = verifyMerkleProof(targetGig, proof, root, 'gig');
       
       expect(isVerified).toBeTruthy();
     });
 
     it('should reject an invalid Merkle proof', () => {
-      const { tree, root } = createMerkleTree(mockGigs);
+      const { tree, root } = createMerkleTree(mockGigs, 'gig');
       const targetGig = mockGigs[0];
-      const differentGig = {
+      const tamperedGig = {
         ...targetGig,
         title: 'Tampered Gig'
       };
       
-      const proof = getProof(targetGig, tree);
-      const isVerified = verifyMerkleProof(differentGig, proof, root);
+      const proof = getProof(targetGig, tree, 'gig');
+      const isVerified = verifyMerkleProof(tamperedGig, proof, root, 'gig');
       
       expect(isVerified).toBeFalsy();
+    });
+
+    it('should verify proof after serialization and deserialization', () => {
+      const { tree, root } = createMerkleTree(mockGigs, 'gig');
+      const targetGig = mockGigs[0];
+      
+      const proof = getProof(targetGig, tree, 'gig');
+      const serializedProof = serializeProof(proof);
+      const serializedStrings = serializedProof.map(p => JSON.stringify(p));
+      const deserializedProof = deserializeProof(serializedStrings);
+      
+      const isVerified = verifyMerkleProof(targetGig, deserializedProof, root, 'gig');
+      expect(isVerified).toBeTruthy();
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle empty gig list', () => {
+      expect(() => createMerkleTree([], 'gig')).not.toThrow();
+    });
+
+    it('should handle single gig', () => {
+      const { tree, root } = createMerkleTree([mockGigs[0]], 'gig');
+      const proof = getProof(mockGigs[0], tree, 'gig');
+      const isVerified = verifyMerkleProof(mockGigs[0], proof, root, 'gig');
+      
+      expect(isVerified).toBeTruthy();
+    });
+
+    it('should maintain proof validity with growing tree', () => {
+      // Start with one gig
+      const { tree: tree1, root: root1 } = createMerkleTree([mockGigs[0]], 'gig');
+      const proof1 = getProof(mockGigs[0], tree1, 'gig');
+      
+      // Add second gig
+      const { tree: tree2, root: root2 } = createMerkleTree(mockGigs, 'gig');
+      const proof2 = getProof(mockGigs[0], tree2, 'gig');
+      
+      // Both proofs should be valid for their respective trees
+      expect(verifyMerkleProof(mockGigs[0], proof1, root1, 'gig')).toBeTruthy();
+      expect(verifyMerkleProof(mockGigs[0], proof2, root2, 'gig')).toBeTruthy();
     });
   });
 });

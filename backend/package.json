@@ -7,7 +7,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "start": "node dist/app.js",
-    "dev": "node --loader ts-node/esm --experimental-specifier-resolution=node src/app.ts",
+    "dev": "node --import ./loader.mjs src/app.ts",
     "build": "tsc"
   },
   "keywords": [],
