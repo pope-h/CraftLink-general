@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import Gig from '../models/Gig.ts';
 import { generateId } from '../utils/idGenerator.ts';
-import { createMerkleTree, getProof, serializeProof } from '../utils/merkleTreeUtils.ts';
+import { createMerkleTree, deserializeProof, getProof, serializeProof, verifyMerkleProof } from '../utils/merkleTreeUtils.ts';
 import { IGig } from '../types/index.ts';
 
 export const createGig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -70,12 +70,84 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
 
 export const getGig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const { merkleRoot } = req.query; // Get root from blockchain
     const gig = await Gig.findOne({ id: req.params.gigId });
     if (!gig) {
       res.status(404).json({ message: 'Gig not found' });
       return;
     }
-    res.json(gig);
+    
+    // Deserialize and verify the merkle proof
+    const proof = deserializeProof(gig.merkleProof || []);
+    const isValid = verifyMerkleProof(
+      gig.toObject(),
+      proof,
+      gig.merkleRoot ?? '',
+      'gig'
+    );
+
+    if (!isValid) {
+      res.status(400).json({ 
+        message: 'Invalid merkle proof. Data may have been tampered with.',
+        gig
+      });
+      return;
+    }
+
+    res.json({ 
+      verified: true,
+      gig 
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// export const getAllGigs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+//   try {
+//     const gigs = await Gig.find();
+//     res.json(gigs);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const getAllGigs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { 
+      page = 1, 
+      limit = 10,
+      status,
+      experienceLevel,
+      skillCategory
+    } = req.query;
+
+    // Build query
+    const query: any = {};
+    
+    if (status) query.status = status;
+    if (experienceLevel) query.experienceLevel = experienceLevel;
+    if (skillCategory) query.skillCategory = { $in: [skillCategory] };
+
+    // Convert page and limit to numbers
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
+    const gigs = await Gig.find(query)
+      .sort({ createdAt: -1 }) // Most recent first
+      .skip(skip)
+      .limit(limitNum);
+
+    // Get total count for pagination
+    const total = await Gig.countDocuments(query);
+
+    res.json({
+      gigs,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum),
+      totalGigs: total
+    });
   } catch (error) {
     next(error);
   }

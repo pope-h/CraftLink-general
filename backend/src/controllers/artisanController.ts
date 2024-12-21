@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import Artisan from '../models/Artisan.ts';
 import { generateId } from '../utils/idGenerator.ts';
-import { createMerkleTree, getProof, serializeProof } from '../utils/merkleTreeUtils.ts';
+import { createMerkleTree, deserializeProof, getProof, serializeProof, verifyMerkleProof } from '../utils/merkleTreeUtils.ts';
 import { IArtisan, IPortfolioItem } from '../types/index.ts';
 import { ethers } from 'ethers';
 
@@ -81,49 +81,32 @@ export const createArtisanProfile = async (req: Request, res: Response, next: Ne
 
 export const updateArtisanProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { artisanId } = req.params;
+    const { walletAddress } = req.params;
     const updateData = req.body;
 
     // Find existing artisan
-    const artisan = await Artisan.findOne({ id: artisanId });
+    const artisan = await Artisan.findOne({ walletAddress: walletAddress });
     if (!artisan) {
       res.status(404).json({ message: 'Artisan profile not found' });
       return;
     }
 
-    // Handle portfolio updates
+    // Remove portfolio from updateData if present since it has its own endpoints now
     if (updateData.portfolio) {
-      // Add unique IDs to new portfolio items
-      updateData.portfolio = updateData.portfolio.map((item: IPortfolioItem) => {
-        if (!item.id) {
-          return {
-            ...item,
-            id: ethers.keccak256(
-              ethers.solidityPacked(
-                ['string', 'string', 'uint256'], 
-                [artisan.id, item.projectTitle, Date.now()]
-              )
-            )
-          };
-        }
-        return item;
-      });
+      delete updateData.portfolio;
     }
 
     // Update artisan profile
     Object.assign(artisan, updateData);
 
-    // Create Merkle Tree for all artisans with type specification
+    // Update Merkle Tree
     const allArtisans = await Artisan.find().lean();
     const { tree, root } = createMerkleTree(allArtisans, 'artisan');
-
-    // Generate Merkle proof with type
     const proof = getProof(artisan.toObject(), tree, 'artisan');
-    
-    // Serialize proof for storage
     const serializedProof = serializeProof(proof);
     artisan.merkleProof = serializedProof.map(p => JSON.stringify(p));
     artisan.merkleRoot = root;
+    
     await artisan.save();
 
     res.json({
@@ -141,15 +124,35 @@ export const updateArtisanProfile = async (req: Request, res: Response, next: Ne
 
 export const getArtisanProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { artisanId } = req.params;
-    const artisan = await Artisan.findOne({ id: artisanId });
+    const { walletAddress } = req.params;
+    const artisan = await Artisan.findOne({ walletAddress: walletAddress });
 
     if (!artisan) {
       res.status(404).json({ message: 'Artisan profile not found' });
       return;
     }
 
-    res.json(artisan);
+    // Deserialize and verify the merkle proof
+    const proof = deserializeProof(artisan.merkleProof || []);
+    const isValid = verifyMerkleProof(
+      artisan.toObject(),
+      proof,
+      artisan.merkleRoot || '',
+      'artisan'
+    );
+
+    if (!isValid) {
+      res.status(400).json({ 
+        message: 'Invalid merkle proof. Data may have been tampered with.',
+        artisan
+      });
+      return;
+    }
+
+    res.json({ 
+      verified: true,
+      artisan 
+    });
   } catch (error) {
     next(error);
   }

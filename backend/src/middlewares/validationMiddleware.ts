@@ -89,3 +89,38 @@ export const validateArtisanUpdate = (req: Request, res: Response, next: NextFun
 
   next();
 };
+
+export const validatePortfolioItem = (req: Request, res: Response, next: NextFunction): void => {
+  const item = req.body;
+  const errors: string[] = [];
+
+  if (!item.projectTitle) {
+    errors.push('Project title is required');
+  }
+
+  if (!item.projectDuration || !item.projectDuration.weeks || item.projectDuration.weeks <= 0) {
+    errors.push('Valid project duration is required');
+  }
+
+  if (!item.description) {
+    errors.push('Description is required');
+  }
+
+  if (item.files) {
+    item.files.forEach((file: any, index: number) => {
+      if (!file.type || !['IMAGE', 'VIDEO'].includes(file.type)) {
+        errors.push(`Invalid file type for file ${index + 1}`);
+      }
+      if (!file.url) {
+        errors.push(`File URL is required for file ${index + 1}`);
+      }
+    });
+  }
+
+  if (errors.length > 0) {
+    res.status(400).json({ errors });
+    return;
+  }
+
+  next();
+};

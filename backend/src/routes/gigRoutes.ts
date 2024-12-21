@@ -1,10 +1,20 @@
 import express from 'express';
-import { createGig, getGig } from '../controllers/gigController.ts';
+import { createGig, getAllGigs, getGig } from '../controllers/gigController.ts';
 import { validateGigCreation } from '../middlewares/validationMiddleware.ts';
 
 const router = express.Router();
 
 router.post('/gigs', validateGigCreation, createGig);
 router.get('/gigs/:gigId', getGig);
+router.get('/gigs', getAllGigs);
+
+// Get all gigs
+// fetch('/api/gigs')
+
+// // With pagination
+// fetch('/api/gigs?page=1&limit=10')
+
+// // With filters
+// fetch('/api/gigs?status=CREATED&experienceLevel=EXPERT&skillCategory=Web Development')
 
 export default router;
