@@ -92,3 +92,90 @@ export const updatePortfolioItem = async (req: Request, res: Response, next: Nex
     next(error);
   }
 };
+
+// Delete a specific portfolio item
+export const deletePortfolioItem = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { walletAddress, portfolioId } = req.params;
+
+    const artisan = await Artisan.findOne({ walletAddress });
+    if (!artisan) {
+      res.status(404).json({ message: 'Artisan profile not found' });
+      return;
+    }
+
+    // Find the portfolio item index
+    const itemIndex = artisan.portfolio.findIndex(item => item.id === portfolioId);
+    if (itemIndex === -1) {
+      res.status(404).json({ message: 'Portfolio item not found' });
+      return;
+    }
+
+    // Remove the portfolio item
+    artisan.portfolio.splice(itemIndex, 1);
+
+    // Update Merkle tree
+    const allArtisans = await Artisan.find().lean();
+    const { tree, root } = createMerkleTree(allArtisans, 'artisan');
+    const proof = getProof(artisan.toObject(), tree, 'artisan');
+    const serializedProof = serializeProof(proof);
+    artisan.merkleProof = serializedProof.map(p => JSON.stringify(p));
+    artisan.merkleRoot = root;
+
+    await artisan.save();
+
+    res.json({
+      message: 'Portfolio item deleted successfully',
+      remainingItems: artisan.portfolio.length
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all portfolio items for an artisan
+export const getPortfolioItems = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const { walletAddress } = req.params;
+
+    const artisan = await Artisan.findOne({ walletAddress })
+      .select('portfolio') // Only select the portfolio field
+      .lean(); // Convert to plain JavaScript object
+
+    if (!artisan) {
+      return res.status(404).json({ message: 'Artisan profile not found' });
+    }
+
+    res.json({
+      portfolio: artisan.portfolio || [],
+      totalItems: (artisan.portfolio || []).length
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get a specific portfolio item
+export const getPortfolioItem = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const { walletAddress, portfolioId } = req.params;
+
+    const artisan = await Artisan.findOne({ walletAddress })
+      .select('portfolio')
+      .lean();
+
+    if (!artisan) {
+      return res.status(404).json({ message: 'Artisan profile not found' });
+    }
+
+    const portfolioItem = artisan.portfolio.find(item => item.id === portfolioId);
+
+    if (!portfolioItem) {
+      return res.status(404).json({ message: 'Portfolio item not found' });
+    }
+
+    res.json({ portfolioItem });
+  } catch (error) {
+    next(error);
+  }
+};
