@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import gigRoutes from './routes/gigRoutes.js';
 import artisanRoutes from './routes/artisanRoutes.js';
 import connectDB from './utils/db.js';
+import chatRoutes from './routes/chatRoutes.ts';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ connectDB();
 // Routes
 app.use('/api', gigRoutes);
 app.use('/api', artisanRoutes);
+app.use('/api', chatRoutes);
 
 // Error handling middleware
 const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {

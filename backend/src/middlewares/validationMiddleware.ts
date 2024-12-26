@@ -124,3 +124,23 @@ export const validatePortfolioItem = (req: Request, res: Response, next: NextFun
 
   next();
 };
+
+export const validateMessage = (req: Request, res: Response, next: NextFunction): void => {
+  const { content } = req.body;
+  const errors: string[] = [];
+
+  if (!content?.trim()) {
+    errors.push('Message content is required');
+  }
+
+  if (content && content.length > 2000) {
+    errors.push('Message content exceeds maximum length (2000 characters)');
+  }
+
+  if (errors.length > 0) {
+    res.status(400).json({ errors });
+    return;
+  }
+
+  next();
+};

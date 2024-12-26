@@ -1,4 +1,3 @@
-// merkleTreeUtils.ts
 import { MerkleTree } from 'merkletreejs';
 import pkg from 'crypto-js';
 import { IGig, IArtisan } from '../types/index.ts';
