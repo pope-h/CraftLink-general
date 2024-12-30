@@ -7,7 +7,7 @@ const messageSchema = new Schema({
     required: true,
     unique: true
   },
-  gigId: {
+  databaseId: {
     type: String,
     required: true
   },
@@ -35,7 +35,7 @@ const conversationSchema = new Schema({
     required: true,
     unique: true
   },
-  gigId: {
+  databaseId: {
     type: String,
     required: true
   },

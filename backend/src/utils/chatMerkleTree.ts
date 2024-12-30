@@ -10,7 +10,7 @@ export const createMessageHash = (message: IMessage): string => {
     ethers.solidityPacked(
       ['string', 'string', 'string', 'uint256', 'string'],
       [
-        message.gigId,
+        message.databaseId,
         message.senderId,
         message.content,
         message.timestamp,

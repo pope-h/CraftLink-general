@@ -7,12 +7,12 @@ import Gig from '../models/Gig.js';
 
 export const initializeConversation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { gigId } = req.params;
+    const { databaseId } = req.params;
     const { artisanAddress } = req.body;
     const clientAddress = req.body.walletAddress; // From auth middleware
 
     // Verify gig exists and participants
-    const gig = await Gig.findOne({ id: gigId });
+    const gig = await Gig.findOne({ id: databaseId });
     if (!gig) {
       res.status(404).json({ message: 'Gig not found' });
       return;
@@ -28,7 +28,7 @@ export const initializeConversation = async (req: Request, res: Response, next: 
     const conversationId = ethers.keccak256(
       ethers.solidityPacked(
         ['string', 'address', 'address'],
-        [gigId, clientAddress, artisanAddress]
+        [databaseId, clientAddress, artisanAddress]
       )
     );
 
@@ -42,7 +42,7 @@ export const initializeConversation = async (req: Request, res: Response, next: 
     // Create new conversation
     const conversation = new Conversation({
       id: conversationId,
-      gigId,
+      databaseId,
       clientAddress,
       artisanAddress,
       lastMessageHash: ethers.keccak256(ethers.toUtf8Bytes('CONVERSATION_START')),
@@ -87,7 +87,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
           [conversationId, conversation.messageCount]
         )
       ),
-      gigId: conversation.gigId,
+      databaseId: conversation.databaseId,
       senderId: senderAddress,
       content,
       timestamp: Date.now(),
@@ -99,7 +99,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
     conversation.messageCount += 1;
 
     // Get all messages and update merkle tree
-    const messages = await Message.find({ gigId: conversation.gigId }).sort('timestamp');
+    const messages = await Message.find({ databaseId: conversation.databaseId }).sort('timestamp');
     const { root, tree } = createConversationTree([...messages, message]);
     
     conversation.merkleRoot = root;
@@ -143,7 +143,7 @@ export const getConversationMessages = async (req: Request, res: Response, next:
 
     // Paginate messages
     const skip = (Number(page) - 1) * Number(limit);
-    const messages = await Message.find({ gigId: conversation.gigId })
+    const messages = await Message.find({ databaseId: conversation.databaseId })
       .sort('-timestamp')
       .skip(skip)
       .limit(Number(limit));

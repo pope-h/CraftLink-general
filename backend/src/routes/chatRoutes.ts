@@ -8,7 +8,7 @@ import { validateMessage } from '../middlewares/validationMiddleware.js';
 
 const router = express.Router();
 
-router.post('/conversations/:gigId', initializeConversation);
+router.post('/conversations/:databaseId', initializeConversation);
 router.post('/conversations/:conversationId/messages', validateMessage, sendMessage);
 router.get('/conversations/:conversationId/messages', getConversationMessages);
 

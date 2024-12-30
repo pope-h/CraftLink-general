@@ -1,6 +1,6 @@
 export interface IMessage {
   id: string;
-  gigId: string;
+  databaseId: string;
   senderId: string;
   content: string;
   timestamp: number;
@@ -9,7 +9,7 @@ export interface IMessage {
 
 export interface IConversation {
   id: string;
-  gigId: string;
+  databaseId: string;
   clientAddress: string;
   artisanAddress: string;
   lastMessageHash: string;

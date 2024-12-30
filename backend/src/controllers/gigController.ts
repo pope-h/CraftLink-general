@@ -22,11 +22,11 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
     } = req.body;
 
     // Generate unique gig ID
-    const gigId = generateId(clientAddress, title, projectDescription);
+    const databaseId = generateId(clientAddress, title, projectDescription);
 
     // Create gig object
     const gig = new Gig({
-      id: gigId,
+      id: databaseId,
       clientAddress,
       clientDescription,
       title,
@@ -46,7 +46,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
 
     // Create Merkle Tree for all gigs with type specification
     const allGigs = await Gig.find().lean();
-    console.log("All Gigs", allGigs);
+    // console.log("All Gigs", allGigs);
     const { tree, root } = createMerkleTree(allGigs, 'gig');
 
     // Generate Merkle proof with type
@@ -59,7 +59,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
     await gig.save();
 
     res.status(201).json({
-      gigId,
+      databaseId,
       merkleProof: gig.merkleProof,
       merkleRoot: root
     });
@@ -71,7 +71,7 @@ export const createGig = async (req: Request, res: Response, next: NextFunction)
 export const getGig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { merkleRoot } = req.query; // Get root from blockchain
-    const gig = await Gig.findOne({ id: req.params.gigId });
+    const gig = await Gig.findOne({ id: req.params.databaseId });
     if (!gig) {
       res.status(404).json({ message: 'Gig not found' });
       return;

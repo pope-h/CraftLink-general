@@ -5,7 +5,7 @@ import { validateGigCreation } from '../middlewares/validationMiddleware.ts';
 const router = express.Router();
 
 router.post('/gigs', validateGigCreation, createGig);
-router.get('/gigs/:gigId', getGig);
+router.get('/gigs/:databaseId', getGig);
 router.get('/gigs', getAllGigs);
 
 // Get all gigs
