@@ -72,6 +72,8 @@ Registry deployed at: 0xa12a383A0fDC53b5010BAC329B8F51575D06fE8c
 https://sepolia.etherscan.io/address/0xD9a745470Fb850737D2c631E7688373d7C9a9237
 
 Token deployed at: 0x0984bf8be54df5Ded9D5052Dc32E3BA7F46f5908 https://sepolia.etherscan.io/address/0xEE29E8A02eC04d8EcAC6286718fb250300935d4A
+
+PaymentProcessor deployed at:
 https://sepolia.etherscan.io/address/0xf03bddFA80283a8f9C2422De6Ee1bde278325d26
 
 GigMarketplace deployed at: 0xB0A40A36ae5A49e2ab5e66e7853FcE3fA1422871 https://sepolia.etherscan.io/address/0xF1E583cA6682beAdE0E79708fb8d86C218AB252A
