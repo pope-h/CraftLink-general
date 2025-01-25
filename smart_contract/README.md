@@ -64,3 +64,18 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+Transactions saved to: /craftlink-general/smart_contract/broadcast/Deploy.s.sol/11155111/run-latest.json
+
+## LATEST DEPLOYMENT
+
+Registry deployed at: 0xa12a383A0fDC53b5010BAC329B8F51575D06fE8c `https://sepolia.basescan.org/address/0xD9a745470Fb850737D2c631E7688373d7C9a9237`
+
+Token deployed at: 0x0984bf8be54df5Ded9D5052Dc32E3BA7F46f5908 `https://sepolia.basescan.org/address/0xEE29E8A02eC04d8EcAC6286718fb250300935d4A`
+
+PaymentProcessor deployed at: 0x5B1adcbBAa575EB46c03F3379024C954B2F2aa9F `https://sepolia.basescan.org/address/0xf03bddFA80283a8f9C2422De6Ee1bde278325d26`
+
+GigMarketplace deployed at: 0xB0A40A36ae5A49e2ab5e66e7853FcE3fA1422871 `https://sepolia.basescan.org/address/0xF1E583cA6682beAdE0E79708fb8d86C218AB252A`
+
+ReviewSystem deployed at: 0x195722BdbF7781a481A200d341e55743762A3E6d `https://sepolia.basescan.org/address/0xF480Dc9eFFBF3F624a5Ed77b040e634934F27E21`
+
+ChatSystem deployed at: 0xe891d7287620b355E8601C5960265F97a5363390 `https://sepolia.basescan.org/address/0xe4c06D1a121635F32a7feC437B1CCB4C90FafC4d`
