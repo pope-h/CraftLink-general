@@ -66,10 +66,16 @@ contract Registry {
         return artisans[_artisanAddress].isVerified;
     }
 
-    function isClient(address _clientAddress) external view returns (bool) {
-        require(userTypes[_clientAddress] == UserType.Client, "Not registered as a client");
+    function getUserType(address _userAddress) external view returns (UserType) {
+        return userTypes[_userAddress];
+    }
 
-        return (clients[_clientAddress].registrationDate != 0);
+    function isClient() external view returns (bool) {
+        return (userTypes[msg.sender] == UserType.Client);
+    }
+
+    function isArtisan() external view returns (bool) {
+        return (userTypes[msg.sender] == UserType.Artisan);
     }
 
     function getArtisanDetails(address _artisanAddress)
