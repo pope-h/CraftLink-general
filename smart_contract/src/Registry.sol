@@ -66,16 +66,12 @@ contract Registry {
         return artisans[_artisanAddress].isVerified;
     }
 
-    function getUserType(address _userAddress) external view returns (UserType) {
-        return userTypes[_userAddress];
+    function isClient(address _clientAddress) external view returns (bool) {
+        return (userTypes[_clientAddress] == UserType.Client);
     }
 
-    function isClient() external view returns (bool) {
-        return (userTypes[msg.sender] == UserType.Client);
-    }
-
-    function isArtisan() external view returns (bool) {
-        return (userTypes[msg.sender] == UserType.Artisan);
+    function isArtisan(address _artisanAddress) external view returns (bool) {
+        return (userTypes[_artisanAddress] == UserType.Artisan);
     }
 
     function getArtisanDetails(address _artisanAddress)
