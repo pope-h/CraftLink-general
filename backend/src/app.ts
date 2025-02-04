@@ -5,10 +5,19 @@ import gigRoutes from './routes/gigRoutes.js';
 import artisanRoutes from './routes/artisanRoutes.js';
 import connectDB from './utils/db.js';
 import chatRoutes from './routes/chatRoutes.ts';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app: Express = express();
+
+const allowedOrigins = ["http://localhost:3000", "https://furte.vercel.app"];
+app.use(
+  cors({ origin: allowedOrigins, credentials: true }) //allowedHeaders: ["*"]
+);
+app.use(express.json());
+app.use(cookieParser());
 
 // Middleware
 app.use(express.json());
@@ -17,6 +26,9 @@ app.use(express.json());
 connectDB();
 
 // Routes
+app.get('/', (req, res) => {
+    res.send('Welcome to Craft-Link Application Programming Interface');
+});
 app.use('/api', gigRoutes);
 app.use('/api', artisanRoutes);
 app.use('/api', chatRoutes);
@@ -36,7 +48,7 @@ app.use((req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-const PORT: number = parseInt(process.env.PORT || '3000');
+const PORT: number = parseInt(process.env.PORT || '3001');
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
