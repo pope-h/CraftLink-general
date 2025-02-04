@@ -53,4 +53,4 @@ process.on('SIGTERM', () => {
     });
 });
 export default app;
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=index.js.map
