@@ -2,22 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/app.js",
+      "src": "src/app.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/artisans/(.*)",
-      "dest": "dist/app.js"
+      "dest": "/api/app.js"
     },
     {
       "src": "/api/portfolio/(.*)",
-      "dest": "dist/app.js"
+      "dest": "/api/app.js"
     },
     {
       "src": "/(.*)",
-      "dest": "dist/app.js"
+      "dest": "/api/app.js"
     }
   ],
   "env": {
