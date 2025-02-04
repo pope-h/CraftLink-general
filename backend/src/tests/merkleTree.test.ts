@@ -1,5 +1,5 @@
-import { createMerkleTree, getProof, verifyMerkleProof, serializeProof, deserializeProof } from '../utils/merkleTreeUtils.ts';
-import { IGig } from '../types/index.ts';
+import { createMerkleTree, getProof, verifyMerkleProof, serializeProof, deserializeProof } from '../utils/merkleTreeUtils.js';
+import { IGig } from '../types/index.js';
 
 describe('Merkle Tree Utilities', () => {
   // Mock gig data for testing

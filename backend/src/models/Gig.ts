@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IGig } from '../types/index.ts';
+import { IGig } from '../types/index.js';
 
 const gigSchema: Schema = new Schema({
   id: {

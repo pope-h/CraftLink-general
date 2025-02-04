@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ethers } from 'ethers';
 import { Message, Conversation } from '../models/Chat.js';
-import { createMessageHash, createConversationTree, verifyMessage } from '../utils/chatMerkleTree.ts';
+import { createMessageHash, createConversationTree, verifyMessage } from '../utils/chatMerkleTree.js';
 import { IGig } from '../types/index.js';
 import Gig from '../models/Gig.js';
 

@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
-import Artisan from '../models/Artisan.ts';
+import Artisan from '../models/Artisan.js';
 import { ethers } from 'ethers';
-import { createMerkleTree, getProof, serializeProof } from '../utils/merkleTreeUtils.ts';
-import { IPortfolioItem } from '../types/index.ts';
+import { createMerkleTree, getProof, serializeProof } from '../utils/merkleTreeUtils.js';
+import { IPortfolioItem } from '../types/index.js';
 
 export const addPortfolioItem = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

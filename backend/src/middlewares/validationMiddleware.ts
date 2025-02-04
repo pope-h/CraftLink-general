@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IGig, IArtisan } from '../types/index.ts';
+import { IGig, IArtisan } from '../types/index.js';
 
 export const validateGigCreation = (req: Request, res: Response, next: NextFunction): void => {
   const { 

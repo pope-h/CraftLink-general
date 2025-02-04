@@ -1,6 +1,6 @@
 import { MerkleTree } from 'merkletreejs';
 import pkg from 'crypto-js';
-import { IGig, IArtisan } from '../types/index.ts';
+import { IGig, IArtisan } from '../types/index.js';
 
 const { SHA256 } = pkg;
 

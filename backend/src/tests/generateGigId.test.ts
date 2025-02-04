@@ -1,5 +1,5 @@
 // idGenerator.test.ts
-import { generateId } from '../utils/idGenerator.ts';
+import { generateId } from '../utils/idGenerator.js';
 import { ethers } from 'ethers';
 
 describe('ID Generator', () => {

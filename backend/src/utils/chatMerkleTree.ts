@@ -1,7 +1,7 @@
 import { MerkleTree } from 'merkletreejs';
 import pkg from 'crypto-js';
 import { ethers } from 'ethers';
-import { IMessage } from '../types/index.ts';
+import { IMessage } from '../types/index.js';
 
 const { SHA256 } = pkg;
 

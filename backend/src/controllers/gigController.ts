@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
-import Gig from '../models/Gig.ts';
-import { generateId } from '../utils/idGenerator.ts';
-import { createMerkleTree, deserializeProof, getProof, serializeProof, verifyMerkleProof } from '../utils/merkleTreeUtils.ts';
-import { IGig } from '../types/index.ts';
+import Gig from '../models/Gig.js';
+import { generateId } from '../utils/idGenerator.js';
+import { createMerkleTree, deserializeProof, getProof, serializeProof, verifyMerkleProof } from '../utils/merkleTreeUtils.js';
+import { IGig } from '../types/index.js';
 
 export const createGig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

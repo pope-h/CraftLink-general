@@ -1,6 +1,6 @@
-import Artisan from "../models/Artisan.ts";
-import Gig from "../models/Gig.ts";
-import { deserializeProof, verifyMerkleProof } from "../utils/merkleTreeUtils.ts";
+import Artisan from "../models/Artisan.js";
+import Gig from "../models/Gig.js";
+import { deserializeProof, verifyMerkleProof } from "../utils/merkleTreeUtils.js";
 
 export const verifyAllEntries = async () => {
   try {

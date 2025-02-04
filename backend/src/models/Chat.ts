@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IMessage, IConversation } from '../types/index.ts';
+import { IMessage, IConversation } from '../types/index.js';
 
 const messageSchema = new Schema({
   id: {
