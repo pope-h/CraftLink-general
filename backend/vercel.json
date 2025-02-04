@@ -8,16 +8,8 @@
   ],
   "routes": [
     {
-      "src": "/api/artisans/(.*)",
-      "dest": "/api/app.js"
-    },
-    {
-      "src": "/api/portfolio/(.*)",
-      "dest": "/api/app.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/api/app.js"
+      "dest": "/src/app.js"
     }
   ],
   "env": {
