@@ -8,8 +8,19 @@
   ],
   "routes": [
     {
+      "src": "/api/artisans/(.*)",
+      "dest": "dist/app.js"
+    },
+    {
+      "src": "/api/portfolio/(.*)",
+      "dest": "dist/app.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "dist/app.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
