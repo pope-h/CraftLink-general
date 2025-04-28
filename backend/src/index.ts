@@ -12,7 +12,7 @@ dotenv.config();
 
 const app: Express = express();
 
-const allowedOrigins = ["http://localhost:3000", "https://craftlink-frontend.vercel.app", "https://craft-link.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "https://craftlink-frontend.vercel.app", "https://craft-link.vercel.app", "https://craft-link-git-pharos-devnet-pope-hs-projects.vercel.app"];
 app.use(
   cors({ origin: allowedOrigins, credentials: true }) //allowedHeaders: ["*"]
 );
